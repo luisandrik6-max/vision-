@@ -18,5 +18,5 @@ canvas {
   width: 100%;
   height: calc(100vh - 60px);
   border-top: 1px solid #ddd;
-  touch-action: none;
+  touch-action: move;
 }
