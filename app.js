@@ -1,10 +1,11 @@
 // ===== Crear canvas =====
 const canvas = new fabric.Canvas('canvas', {
-  selection: false,        // solo 1 objeto a la vez
-  preserveObjectStacking: true
+  selection: false,            // solo un objeto activo
+  preserveObjectStacking: true,
+  allowTouchScrolling: true     // permite scroll en iPad
 });
 
-// Ajuste tamaño
+// Ajustar tamaño
 function resizeCanvas() {
   canvas.setWidth(window.innerWidth);
   canvas.setHeight(window.innerHeight - 60);
@@ -17,7 +18,7 @@ canvas.on('mouse:down', () => {
   canvas.discardActiveObject();
 });
 
-// ===== Función para posiciones suaves (10% overlap) =====
+// ===== Posiciones suaves (10% overlap) =====
 function getSoftPosition(index, itemWidth, itemHeight) {
   const padding = 40;
   const overlap = 0.1; // 10%
@@ -51,7 +52,15 @@ imageInput.addEventListener('change', e => {
         img.set({
           left: pos.left,
           top: pos.top,
-          angle: Math.random() * 10 - 5
+          angle: Math.random() * 10 - 5,
+          hasControls: true,       // permite escalar y rotar
+          hasBorders: true,
+          lockScalingFlip: true
+        });
+
+        img.setControlsVisibility({
+          mt: true, mb: true, ml: true, mr: true,
+          tl: true, tr: true, bl: true, br: true
         });
 
         canvas.add(img);
@@ -69,7 +78,14 @@ document.getElementById('addText').onclick = () => {
     top: canvas.height / 2,
     fontSize: 32,
     fill: '#000',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    hasControls: true,
+    hasBorders: true
+  });
+
+  text.setControlsVisibility({
+    mt: true, mb: true, ml: true, mr: true,
+    tl: true, tr: true, bl: true, br: true
   });
 
   canvas.add(text);
