@@ -1,11 +1,12 @@
+
 // ===== Crear canvas =====
 const canvas = new fabric.Canvas('canvas', {
-  selection: false,            // solo un objeto activo
+  selection: false,           // solo un objeto activo
   preserveObjectStacking: true,
-  allowTouchScrolling: true     // permite scroll en iPad
+  allowTouchScrolling: false  // dejar false para iPad mover/rotar
 });
 
-// Ajustar tamaño
+// ===== Ajustar tamaño del canvas =====
 function resizeCanvas() {
   canvas.setWidth(window.innerWidth);
   canvas.setHeight(window.innerHeight - 60);
@@ -13,7 +14,7 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// Mejor comportamiento touch
+// ===== Deseleccionar al tocar fondo =====
 canvas.on('mouse:down', () => {
   canvas.discardActiveObject();
 });
@@ -35,7 +36,11 @@ function getSoftPosition(index, itemWidth, itemHeight) {
 const imageInput = document.getElementById('imageInput');
 
 imageInput.addEventListener('change', e => {
-  Array.from(e.target.files).forEach(file => {
+  const files = Array.from(e.target.files);
+
+  files.forEach(() => {
+    const file = files.shift();  // tomar primero y removerlo
+    if (!file) return;
     const reader = new FileReader();
 
     reader.onload = () => {
@@ -53,8 +58,9 @@ imageInput.addEventListener('change', e => {
           left: pos.left,
           top: pos.top,
           angle: Math.random() * 10 - 5,
-          hasControls: true,       // permite escalar y rotar
+          hasControls: true,
           hasBorders: true,
+          selectable: true,
           lockScalingFlip: true
         });
 
@@ -64,23 +70,27 @@ imageInput.addEventListener('change', e => {
         });
 
         canvas.add(img);
+        canvas.renderAll();  // asegurar que se dibuje
       });
     };
 
     reader.readAsDataURL(file);
   });
+
+  e.target.value = ''; // limpiar input para subir las mismas imágenes otra vez
 });
 
 // ===== Texto editable =====
 document.getElementById('addText').onclick = () => {
   const text = new fabric.IText('Tu palabra', {
-    left: canvas.width / 2,
-    top: canvas.height / 2,
+    left: canvas.width/2,
+    top: canvas.height/2,
     fontSize: 32,
     fill: '#000',
     fontWeight: 'bold',
     hasControls: true,
-    hasBorders: true
+    hasBorders: true,
+    selectable: true
   });
 
   text.setControlsVisibility({
